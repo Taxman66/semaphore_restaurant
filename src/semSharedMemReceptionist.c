@@ -150,8 +150,27 @@ int main (int argc, char *argv[])
 static int decideTableOrWait(int n)
 {
      //TODO insert your code here
+     int avail1 = 1;
+     int avail2 = 1;
 
-     return -1;
+     for (int i = 0; i < n; i++) {
+	    if (assignedTable[i] == 1) {
+		    avail1 = 0;
+        }
+	    else if (assignedTable[i] == 2) {
+		    avail2 = 0;
+        }
+     }
+     
+     if (avail1 == 1) {
+        return 1;
+     }
+     else if (avail2 == 1) {
+        return 2;
+     }
+     else {
+        return -1;
+     }
 }
 
 /**
