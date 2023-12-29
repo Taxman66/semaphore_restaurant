@@ -60,7 +60,6 @@ typedef struct
     int startTime[MAXGROUPS];
     /** \brief estimated eat time of groups */
     int eatTime[MAXGROUPS];
-
     /** \brief saves the table that is being used by each group */
     int assignedTable[MAXGROUPS];
 

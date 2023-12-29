@@ -149,28 +149,28 @@ int main (int argc, char *argv[])
  */
 static int decideTableOrWait(int n)
 {
-     //TODO insert your code here
-     int avail1 = 1;
-     int avail2 = 1;
+    //TODO insert your code here
+    int avail1 = 1;
+    int avail2 = 1;
 
-     for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
 	    if (assignedTable[i] == 1) {
 		    avail1 = 0;
         }
 	    else if (assignedTable[i] == 2) {
 		    avail2 = 0;
         }
-     }
+    }
      
-     if (avail1 == 1) {
+    if (avail1 == 1) {
         return 1;
-     }
-     else if (avail2 == 1) {
+    }
+    else if (avail2 == 1) {
         return 2;
-     }
-     else {
+    }
+    else {
         return -1;
-     }
+    }
 }
 
 /**
@@ -207,6 +207,8 @@ static request waitForGroup()
     }
 
     // TODO insert your code here
+    sh->fSt.st.receptionistStat = WAIT_FOR_REQUEST;
+    saveState(nFic, &sh->fSt);
     
     if (semUp (semgid, sh->mutex) == -1)      {                                             /* exit critical region */
         perror ("error on the down operation for semaphore access (WT)");
@@ -214,6 +216,10 @@ static request waitForGroup()
     }
 
     // TODO insert your code here
+    if (semDown (semgid, sh->receptionistReq) == -1)  {                                          
+        perror ("error on the down operation for semaphore access (WT)");
+        exit (EXIT_FAILURE);
+    }
 
     if (semDown (semgid, sh->mutex) == -1)  {                                                  /* enter critical region */
         perror ("error on the up operation for semaphore access (WT)");
@@ -221,6 +227,15 @@ static request waitForGroup()
     }
 
     // TODO insert your code here
+    if (sh->fSt.receptionistRequest.reqType == TABLEREQ) {
+        ret.reqType = TABLEREQ;
+    }
+
+    else if (sh->fSt.receptionistRequest.reqType == BILLREQ){
+        req.reqType = BILLREQ;
+        // req.reqGroup = ???
+    }
+    saveState(nFic, &sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1) {                                                  /* exit critical region */
      perror ("error on the down operation for semaphore access (WT)");
@@ -228,6 +243,10 @@ static request waitForGroup()
     }
 
     // TODO insert your code here
+    if (semUp (semgid, sh->receptionistRequestPossible) == -1)  {                                          
+        perror ("error on the up operation for semaphore access (WT)");
+        exit (EXIT_FAILURE);
+    }
 
     return ret;
 
@@ -250,6 +269,22 @@ static void provideTableOrWaitingRoom (int n)
     }
 
     // TODO insert your code here
+    sh->fSt.st.receptionistStat = ASSIGNTABLE;
+    if (decideTableOrWait(n) == 1) {
+        sh->fSt.assignedTable[n] = 1;
+        if (semUp (semgid, sh->waitForTable[n]) == -1) {                                               /* exit critical region */
+            perror ("error on the up operation for semaphore access (WT)");
+            exit (EXIT_FAILURE);
+        }
+    }
+    else if (decideTableOrWait(n) == 2) {
+        sh->fSt.assignedTable[n] = 2;
+        if (semUp (semgid, sh->waitForTable[n]) == -1) {                                               /* exit critical region */
+            perror ("error on the up operation for semaphore access (WT)");
+            exit (EXIT_FAILURE);
+        }
+    }
+    saveState(nFic, &sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1) {                                               /* exit critical region */
         perror ("error on the down operation for semaphore access (WT)");
@@ -276,6 +311,9 @@ static void receivePayment (int n)
     }
 
     // TODO insert your code here
+    sh->fSt.st.receptionistStat = RECVPAY;
+    sh->fSt.assignedTable[n] = 0;
+    saveState(nFic, &sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1)  {                                                  /* exit critical region */
      perror ("error on the down operation for semaphore access (WT)");
@@ -283,5 +321,9 @@ static void receivePayment (int n)
     }
 
     // TODO insert your code here
+    if (semUp (semgid, sh->tableDone[n]) == -1)  {
+     perror ("error on the up operation for semaphore access (WT)");
+        exit (EXIT_FAILURE);
+    }
 }
 

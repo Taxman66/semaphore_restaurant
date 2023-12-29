@@ -189,8 +189,13 @@ static void eat (int id)
 static void checkInAtReception(int id)
 {
     // TODO insert your code here
-    if (semDown (semgid, sh->waitForTable[id]) == -1) {                                        
+    if (semDown (semgid, sh->receptionistRequestPossible) == -1) {                                               
         perror ("error on the down operation for semaphore access (CT)");
+        exit (EXIT_FAILURE);
+    }
+
+    if (semUp (semgid, sh->receptionistReq) == -1) {                                                
+        perror ("error on the up operation for semaphore access (CT)");
         exit (EXIT_FAILURE);
     }
 
@@ -209,16 +214,10 @@ static void checkInAtReception(int id)
     }
 
     // TODO insert your code here
-    if (semDown (semgid, sh->receptionistRequestPossible) == -1) {                                               
+    if (semDown (semgid, sh->waitForTable[id]) == -1) {                                        
         perror ("error on the down operation for semaphore access (CT)");
         exit (EXIT_FAILURE);
     }
-
-    if (semUp (semgid, sh->receptionistReq) == -1) {                                                
-        perror ("error on the up operation for semaphore access (CT)");
-        exit (EXIT_FAILURE);
-    }
-
 }
 
 /**

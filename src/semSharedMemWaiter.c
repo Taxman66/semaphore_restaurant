@@ -153,11 +153,6 @@ static request waitForClientOrChef()
     }
 
     // TODO insert your code here
-    if (semUp (semgid, sh->waiterRequestPossible) == -1) {                                            
-        perror ("error on the down operation for semaphore access (WT)");
-        exit (EXIT_FAILURE);
-    }
-
     if (semDown (semgid, sh->waiterRequest) == -1)
         { perror ("error on the down operation for semaphore access (CT)");
             exit (EXIT_FAILURE);
@@ -173,7 +168,7 @@ static request waitForClientOrChef()
         req.reqType = FOODREADY;
     }
 
-    else if (sh->fSt.foodOrder == FOODREQ){
+    else if (sh->fSt.waiterRequest.reqType == FOODREQ){
         req.reqType = FOODREQ;
         // req.reqGroup = ???
     }
@@ -185,6 +180,10 @@ static request waitForClientOrChef()
     }
 
     // TODO insert your code here
+    if (semUp (semgid, sh->waiterRequestPossible) == -1) {                                            
+        perror ("error on the down operation for semaphore access (WT)");
+        exit (EXIT_FAILURE);
+    }
 
     return req;
 
