@@ -127,6 +127,9 @@ static void waitForOrder ()
 {
 
     //TODO insert your code here
+    sh->fSt.st.chefStat = WAIT_FOR_ORDER;
+    saveState(nFic, &sh->fSt);
+
     if (semDown (semgid, sh->waitOrder) == -1) {                                                    
         perror ("error on the down operation for semaphore access (PT)");
         exit (EXIT_FAILURE);
@@ -178,6 +181,7 @@ static void processOrder ()
 
     //TODO insert your code here
     sh->fSt.st.chefStat = REST;
+    sh->fSt.waiterRequest.reqType = FOODREADY;
     saveState(nFic, &sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1) {                                                      /* exit critical region */

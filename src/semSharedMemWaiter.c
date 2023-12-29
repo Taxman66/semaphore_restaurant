@@ -169,11 +169,11 @@ static request waitForClientOrChef()
     }
 
     // TODO insert your code here
-    if (sh->fSt.foodOrder == 0) {
+    if (sh->fSt.waiterRequest.reqType == FOODREADY) {
         req.reqType = FOODREADY;
     }
 
-    else {
+    else if (sh->fSt.foodOrder == FOODREQ){
         req.reqType = FOODREQ;
         // req.reqGroup = ???
     }
