@@ -216,21 +216,20 @@ static void informChef (int n)
 
     
     // TODO insert your code here
-    if (semUp (semgid, sh->requestReceived[n]) == -1)                                             
-    { perror ("error on the up operation for semaphore access (WT)");
-        exit (EXIT_FAILURE);
-    }
-
-    if (semDown (semgid, sh->orderReceived) == -1)                                             
-    { perror ("error on the down operation for semaphore access (WT)");
-        exit (EXIT_FAILURE);
-    }
-
     if (semUp (semgid, sh->waitOrder) == -1)
     { perror ("error on the up operation for semaphore access (WT)");
         exit (EXIT_FAILURE);
     }
 
+    if (semUp (semgid, sh->requestReceived[n]) == -1)                                             
+    { perror ("error on the up operation for semaphore access (WT)");
+        exit (EXIT_FAILURE);
+    }
+    
+    if (semDown (semgid, sh->orderReceived) == -1)                                             
+    { perror ("error on the down operation for semaphore access (WT)");
+        exit (EXIT_FAILURE);
+    }
 }
 
 /**
