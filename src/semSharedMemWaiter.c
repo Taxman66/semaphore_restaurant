@@ -146,7 +146,6 @@ static request waitForClientOrChef()
     sh->fSt.st.waiterStat = WAIT_FOR_REQUEST;
     saveState(nFic, &sh->fSt);
 
-    
     if (semUp (semgid, sh->mutex) == -1)      {                                             /* exit critical region */
         perror ("error on the up operation for semaphore access (WT)");
         exit (EXIT_FAILURE);
@@ -171,7 +170,7 @@ static request waitForClientOrChef()
 
     else if (sh->fSt.waiterRequest.reqType == FOODREQ){
         req.reqType = FOODREQ;
-        req.reqGroup = sh->fSt.foodGroup;
+        req.reqGroup = sh->fSt.waiterRequest.reqGroup;
     }
     saveState(nFic, &sh->fSt);
 

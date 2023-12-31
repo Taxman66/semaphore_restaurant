@@ -237,11 +237,12 @@ static request waitForGroup()
     // TODO insert your code here
     if (sh->fSt.receptionistRequest.reqType == TABLEREQ) {
         ret.reqType = TABLEREQ;
+        ret.reqGroup = sh->fSt.receptionistRequest.reqGroup; 
     }
 
     else if (sh->fSt.receptionistRequest.reqType == BILLREQ){
-        req.reqType = BILLREQ;
-        // req.reqGroup = ???
+        ret.reqType = BILLREQ;
+        ret.reqGroup = sh->fSt.receptionistRequest.reqGroup;
     }
     saveState(nFic, &sh->fSt);
 

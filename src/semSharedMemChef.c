@@ -141,7 +141,6 @@ static void waitForOrder ()
     }
 
     //TODO insert your code here
-    sh->fSt.foodOrder = 0;
     sh->fSt.st.chefStat = COOK;
     saveState(nFic, &sh->fSt);
     
@@ -181,7 +180,6 @@ static void processOrder ()
     //TODO insert your code here
     sh->fSt.st.chefStat = REST;
     sh->fSt.waiterRequest.reqType = FOODREADY;
-    sh->fSt.waiterRequest.reqGroup = sh->fSt.foodGroup;
     saveState(nFic, &sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1) {                                                      /* exit critical region */
