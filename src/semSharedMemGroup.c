@@ -206,6 +206,7 @@ static void checkInAtReception(int id)
 
     // TODO insert your code here
     sh->fSt.st.groupStat[id] = ATRECEPTION;
+    sh->fSt.groupsWaiting = sh->fSt.groupsWaiting + 1;
     saveState(nFic, &sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1) {                                                      /* exit critical region */
@@ -239,10 +240,12 @@ static void orderFood (int id)
     }
 
     // TODO insert your code here
+    sh->fSt.groupsWaiting = sh->fSt.groupsWaiting - 1;
     sh->fSt.foodOrder= 1;
     sh->fSt.foodGroup = id;
     sh->fSt.st.groupStat[id] = FOOD_REQUEST;
     sh->fSt.waiterRequest.reqType = FOODREQ;
+    sh->fSt.waiterRequest.reqGroup = id;
     saveState(nFic, &sh->fSt);
 
     if (semUp (semgid, sh->mutex) == -1) {                                                     /* exit critical region */

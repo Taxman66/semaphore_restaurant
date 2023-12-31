@@ -166,11 +166,12 @@ static request waitForClientOrChef()
     // TODO insert your code here
     if (sh->fSt.waiterRequest.reqType == FOODREADY) {
         req.reqType = FOODREADY;
+        req.reqGroup = sh->fSt.waiterRequest.reqGroup;
     }
 
     else if (sh->fSt.waiterRequest.reqType == FOODREQ){
         req.reqType = FOODREQ;
-        // req.reqGroup = ???
+        req.reqGroup = sh->fSt.foodGroup;
     }
     saveState(nFic, &sh->fSt);
 
@@ -213,7 +214,6 @@ static void informChef (int n)
     { perror ("error on the up operation for semaphore access (WT)");
         exit (EXIT_FAILURE);
     }
-
     
     // TODO insert your code here
     if (semUp (semgid, sh->waitOrder) == -1)

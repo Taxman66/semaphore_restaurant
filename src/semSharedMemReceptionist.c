@@ -183,9 +183,17 @@ static int decideTableOrWait(int n)
  */
 static int decideNextGroup()
 {
-     //TODO insert your code here
-
-     return -1;
+    //TODO insert your code here
+    int ret = 0;
+    for (int i = 0; i < sh->fSt.nGroups)
+        if (sh->fSt.st.groupStat[i] == ATRECEPTION) {
+            ret = i;
+            break;
+        }
+        else {
+            ret = -1;
+        }
+    return ret;
 }
 
 /**
@@ -305,12 +313,20 @@ static void provideTableOrWaitingRoom (int n)
 
 static void receivePayment (int n)
 {
+    int table;
+    int nextGroup;
     if (semDown (semgid, sh->mutex) == -1)  {                                                  /* enter critical region */
         perror ("error on the up operation for semaphore access (WT)");
         exit (EXIT_FAILURE);
     }
 
     // TODO insert your code here
+    if (sh->fSt.assignedTable[n] == 1) {
+        table = 1;
+    }
+    else {
+        table = 2;
+    }
     sh->fSt.st.receptionistStat = RECVPAY;
     sh->fSt.assignedTable[n] = 0;
     saveState(nFic, &sh->fSt);
@@ -324,6 +340,11 @@ static void receivePayment (int n)
     if (semUp (semgid, sh->tableDone[n]) == -1)  {
      perror ("error on the up operation for semaphore access (WT)");
         exit (EXIT_FAILURE);
+    }
+
+    if (sh->groupsWaiting > 0) {
+        nextGroup = decideNextGroup();
+        sh->fSt.assignedTable[nextGroup] = table;
     }
 }
 
